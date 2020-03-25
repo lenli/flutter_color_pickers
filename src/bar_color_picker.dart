@@ -194,6 +194,8 @@ class _BarColorPickerState extends State<BarColorPicker> {
         width: cursorDiameter,
         height: cursorDiameter,
         decoration: BoxDecoration(
+          color: currentColor,
+          shape: BoxShape.circle,
           border: Border.all(
             width: 3.0,
             color: Colors.white,
@@ -206,8 +208,6 @@ class _BarColorPickerState extends State<BarColorPicker> {
               blurRadius: 3.0,
             )
           ],
-          color: currentColor,
-          shape: BoxShape.circle,
         ),
       ),
     );

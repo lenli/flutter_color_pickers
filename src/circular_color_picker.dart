@@ -93,6 +93,7 @@ class _CircularColorPickerState extends State<CircularColorPicker> {
   Widget build(BuildContext context) {
     // helpers to make code more readable
     final double radius = widget.radius;
+    final double diameter = widget.radius * 2;
     final double cursorRadius = widget.cursorRadius;
     final double cursorDiameter = widget.cursorRadius * 2.0;
     final double cursorRadians = _degreesToRadians(270 - cursorDegrees);
@@ -104,18 +105,20 @@ class _CircularColorPickerState extends State<CircularColorPicker> {
     // container
     Widget container = SizedBox(
         width: (radius + cursorRadius) * 2.0,
-        height: (radius + cursorRadius) * 2.0);
+        height: (radius + cursorRadius) * 2.0,
+    );
 
     // gradient
     Widget gradient = Positioned(
       left: cursorRadius,
       top: cursorRadius,
       child: Container(
-        width: radius * 2,
-        height: radius * 2,
+        width: diameter,
+        height: diameter,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(radius)),
-            gradient: SweepGradient(colors: _kDefaultColors)),
+            gradient: SweepGradient(colors: _kDefaultColors),
+        ),
       ),
     );
 
@@ -127,6 +130,8 @@ class _CircularColorPickerState extends State<CircularColorPicker> {
         width: cursorDiameter,
         height: cursorDiameter,
         decoration: BoxDecoration(
+          color: currentColor,
+          shape: BoxShape.circle,
           border: Border.all(
             width: 3.0,
             color: Colors.white,
@@ -139,8 +144,6 @@ class _CircularColorPickerState extends State<CircularColorPicker> {
               blurRadius: 3.0,
             )
           ],
-          color: currentColor,
-          shape: BoxShape.circle,
         ),
       ),
     );
