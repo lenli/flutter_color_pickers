@@ -17,6 +17,14 @@ const List<Color> _kDefaultColors = [
   Color(0xffff0000)
 ];
 
+/**
+ * `CircularColorPicker` displays a circular color picker gradient
+ * that returns a `Color` when touch/drag ends.
+ *
+ * Additionally, you can customize the size of the picker elements.
+ * `radius`: radius of the circular gradient
+ * `cursorRadius`: radius of the cursor
+ */
 class CircularColorPicker extends StatefulWidget {
   // set initial starting color
   final Color initialColor;

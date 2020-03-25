@@ -24,6 +24,20 @@ const List<Color> _kDefaultGrayScaleColors = [
   Color(0xffffffff)
 ];
 
+/**
+ * `BarColorPicker` displays a bar color picker gradient
+ * that returns a `Color` when touch/drag ends.
+ *
+ * Use `isHorizontal` to control if the bar color picker is
+ * horizontal or vertical. Default is horizontal.
+ *
+ * Use `BarColorPicker.grayScale` to display a grayscale picker.
+ * Otherwise, `BarColorPicker` will default to a color picker.
+ *
+ * Additionally, you can customize the size of the picker.
+ * `width`: height for a horizontal bar, width for a vertical bar
+ * `length`: width for a horizontal bar, height for a vertical bar
+ */
 class BarColorPicker extends StatefulWidget {
   // horizontal bar vs vertical bar
   final bool isHorizontal;
