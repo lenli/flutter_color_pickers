@@ -2,12 +2,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 // default sizes
-const double _defaultWidth = 16.0;
-const double _defaultLength = 200.0;
+const double _kDefaultWidth = 16.0;
+const double _kDefaultLength = 200.0;
 
 // default values for color
-const Color _defaultColor = Color(0xffff0000);
-const List<Color> _defaultColors = [
+const Color _kDefaultColor = Color(0xffff0000);
+const List<Color> _kDefaultColors = [
   Color(0xffff0000),
   Color(0xffffff00),
   Color(0xff00ff00),
@@ -18,8 +18,8 @@ const List<Color> _defaultColors = [
 ];
 
 // default values for grayscale
-const Color _defaultGrayScaleColor = Color(0xff000000);
-const List<Color> _defaultGrayScaleColors = [
+const Color _kDefaultGrayScaleColor = Color(0xff000000);
+const List<Color> _kDefaultGrayScaleColors = [
   Color(0xff000000),
   Color(0xffffffff)
 ];
@@ -59,10 +59,10 @@ class BarColorPicker extends StatefulWidget {
     key: key,
     isHorizontal: isHorizontal ?? true,
     isColor: false,
-    initialColor: initialColor ?? _defaultGrayScaleColor,
-    colors: colors ?? _defaultGrayScaleColors,
-    width: width ?? _defaultWidth,
-    length: length ?? _defaultLength,
+    initialColor: initialColor ?? _kDefaultGrayScaleColor,
+    colors: colors ?? _kDefaultGrayScaleColors,
+    width: width ?? _kDefaultWidth,
+    length: length ?? _kDefaultLength,
     onColorChange: onColorChange,
   );
 
@@ -71,10 +71,10 @@ class BarColorPicker extends StatefulWidget {
     Key key,
     this.isHorizontal = true,
     this.isColor = true,
-    this.initialColor = _defaultColor,
-    this.colors = _defaultColors,
-    this.width = _defaultWidth,
-    this.length = _defaultLength,
+    this.initialColor = _kDefaultColor,
+    this.colors = _kDefaultColors,
+    this.width = _kDefaultWidth,
+    this.length = _kDefaultLength,
     @required this.onColorChange,
   })  : assert(isHorizontal != null),
         assert(isColor != null),
@@ -106,6 +106,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
   @override
   void initState() {
     super.initState();
+    // set percent offset for initial color provided
     percentOffset = HSVColor.fromColor(widget.initialColor).hue / 360.0;
   }
 
@@ -150,7 +151,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    // helpers to shorten code and make it more readable
+    // helpers to make code more readable
     double barLength = widget.length;
     double barWidth = widget.width;
     double cursorRadius = widget.width;
