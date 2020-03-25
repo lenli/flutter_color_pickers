@@ -1,31 +1,87 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-enum BarColorPickerStyle {
-  ColorScaleHorizontal,
-  ColorScaleVertical,
-  GreyScaleHorizontal,
-  GreyScaleVertical,
-}
+// default sizes
+const double _defaultWidth = 16.0;
+const double _defaultLength = 200.0;
+
+// default values for color
+const Color _defaultColor = Color(0xffff0000);
+const List<Color> _defaultColors = [
+  Color(0xffff0000),
+  Color(0xffffff00),
+  Color(0xff00ff00),
+  Color(0xff00ffff),
+  Color(0xff0000ff),
+  Color(0xffff00ff),
+  Color(0xffff0000)
+];
+
+// default values for grayscale
+const Color _defaultGrayScaleColor = Color(0xff000000);
+const List<Color> _defaultGrayScaleColors = [
+  Color(0xff000000),
+  Color(0xffffffff)
+];
 
 class BarColorPicker extends StatefulWidget {
-  final BarColorPickerStyle style;
-  final double width;
-  final double length;
+  // horizontal bar vs vertical bar
+  final bool isHorizontal;
+
+  // color bar vs grayscale bar
+  final bool isColor;
+
+  // set initial starting color
   final Color initialColor;
+
+  // ranges of colors to display in bar
+  final List<Color> colors;
+
+  // height for a horizontal bar, width for a vertical bar
+  final double width;
+
+  // width for a horizontal bar, height for a vertical bar
+  final double length;
+
+  // callback when drag ends, returns ending color
   final ValueChanged onColorChange;
 
+  // constructor for grayscale bar color picker
+  BarColorPicker.grayScale({
+    Key key,
+    bool isHorizontal,
+    Color initialColor,
+    List<Color> colors,
+    double width,
+    double length,
+    ValueChanged onColorChange,
+  }) : this(
+    key: key,
+    isHorizontal: isHorizontal ?? true,
+    isColor: false,
+    initialColor: initialColor ?? _defaultGrayScaleColor,
+    colors: colors ?? _defaultGrayScaleColors,
+    width: width ?? _defaultWidth,
+    length: length ?? _defaultLength,
+    onColorChange: onColorChange,
+  );
+
+  // default constructor is for color
   BarColorPicker({
     Key key,
-    this.style = BarColorPickerStyle.ColorScaleHorizontal,
-    this.width = 16.0,
-    this.length = 200.0,
-    this.initialColor = const Color(0xffff0000),
+    this.isHorizontal = true,
+    this.isColor = true,
+    this.initialColor = _defaultColor,
+    this.colors = _defaultColors,
+    this.width = _defaultWidth,
+    this.length = _defaultLength,
     @required this.onColorChange,
-  })  : assert(style != null),
+  })  : assert(isHorizontal != null),
+        assert(isColor != null),
+        assert(initialColor != null),
+        assert(colors != null),
         assert(width != null),
         assert(length != null),
-        assert(initialColor != null),
         assert(onColorChange != null),
         super(key: key);
 
@@ -34,12 +90,12 @@ class BarColorPicker extends StatefulWidget {
 }
 
 class _BarColorPickerState extends State<BarColorPicker> {
-  List<Color> colors;
+  // represents the current offset, which can be converted to the current color
   double percentOffset;
-  bool isHorizontal, isColor;
 
+  // convert percent offset to a color based on color vs grayscale
   get currentColor {
-    if (isColor) {
+    if (widget.isColor) {
       return HSVColor.fromAHSV(1.0, percentOffset * 360, 1.0, 1.0).toColor();
     } else {
       int channel = (0xff * percentOffset).toInt();
@@ -50,61 +106,37 @@ class _BarColorPickerState extends State<BarColorPicker> {
   @override
   void initState() {
     super.initState();
-
-    switch (widget.style) {
-      case BarColorPickerStyle.ColorScaleHorizontal:
-        isHorizontal = true;
-        isColor = true;
-        break;
-
-      case BarColorPickerStyle.ColorScaleVertical:
-        isHorizontal = false;
-        isColor = true;
-        break;
-
-      case BarColorPickerStyle.GreyScaleHorizontal:
-        isHorizontal = true;
-        isColor = false;
-        break;
-
-      case BarColorPickerStyle.GreyScaleVertical:
-        isHorizontal = false;
-        isColor = false;
-        break;
-    }
-
-    if (isColor) {
-      colors = const [
-        Color(0xffff0000),
-        Color(0xffffff00),
-        Color(0xff00ff00),
-        Color(0xff00ffff),
-        Color(0xff0000ff),
-        Color(0xffff00ff),
-        Color(0xffff0000)
-      ];
-    } else {
-      colors = const [Color(0xff000000), Color(0xffffffff)];
-    }
-
     percentOffset = HSVColor.fromColor(widget.initialColor).hue / 360.0;
   }
 
-  void handleTouchEnded() {
-    if (isColor) {
-      Color color =
-          HSVColor.fromAHSV(1.0, percentOffset * 360, 1.0, 1.0).toColor();
-      widget.onColorChange(color);
-    } else {
-      final int channel = (0xff * percentOffset).toInt();
-      Color color = Color.fromARGB(0xff, channel, channel, channel);
-      widget.onColorChange(color);
-    }
+  // when drag ends, send notification of color change
+  void handleDragEnded() {
+    widget.onColorChange(currentColor);
   }
 
-  void handleTouch(Offset globalPosition, BuildContext context) {
+  // handle horizontal drag events
+  void handleHorizontalDrag(Offset globalPosition, BuildContext context) {
+    if (!widget.isHorizontal) {
+      return;
+    }
+    // only update offset if horizontal
+    handleDrag(globalPosition, context);
+  }
+
+  // handle vertical drag events
+  void handleVerticalDrag(Offset globalPosition, BuildContext context) {
+    if (widget.isHorizontal) {
+      return;
+    }
+    // only update offset if not horizontal
+    handleDrag(globalPosition, context);
+  }
+
+  // handle generic drag events
+  void handleDrag(Offset globalPosition, BuildContext context) {
+    // update percent offset of a drag gesture event converting global coordinates to local
     RenderBox box = context.findRenderObject();
-    double localPosition = isHorizontal
+    double localPosition = widget.isHorizontal
         ? box.globalToLocal(globalPosition).dx
         : box.globalToLocal(globalPosition).dy;
     double rawTouchOffset = (localPosition - widget.width) / widget.length;
@@ -118,11 +150,12 @@ class _BarColorPickerState extends State<BarColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    // size helpers
+    // helpers to shorten code and make it more readable
     double barLength = widget.length;
     double barWidth = widget.width;
     double cursorRadius = widget.width;
     double cursorDiameter = widget.width * 2.0;
+    bool isHorizontal = widget.isHorizontal;
 
     // container
     Widget container = SizedBox(
@@ -130,20 +163,10 @@ class _BarColorPickerState extends State<BarColorPicker> {
       height: isHorizontal ? cursorDiameter : barLength + cursorDiameter,
     );
 
-    // gradientBar
-    Gradient gradient = isHorizontal
-        ? LinearGradient(colors: colors)
-        : LinearGradient(
-            colors: colors,
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          );
-    double left = isHorizontal ? cursorRadius : (cursorDiameter - barWidth) / 2;
-    double top = isHorizontal ? (cursorDiameter - barWidth) / 2 : cursorRadius;
-
+    // gradient
     Widget gradientBar = Positioned(
-      left: left,
-      top: top,
+      left: isHorizontal ? cursorRadius : cursorRadius / 2.0,
+      top: isHorizontal ? cursorRadius / 2.0 : cursorRadius,
       child: Container(
         width: isHorizontal ? barLength : barWidth,
         height: isHorizontal ? barWidth : barLength,
@@ -151,7 +174,13 @@ class _BarColorPickerState extends State<BarColorPicker> {
           borderRadius: isHorizontal
               ? BorderRadius.all(Radius.circular(barWidth / 2.0))
               : BorderRadius.all(Radius.circular(barLength / 2.0)),
-          gradient: gradient,
+          gradient: isHorizontal
+              ? LinearGradient(colors: widget.colors)
+              : LinearGradient(
+            colors: widget.colors,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
       ),
     );
@@ -182,25 +211,26 @@ class _BarColorPickerState extends State<BarColorPicker> {
       ),
     );
 
-    var handleHorizontalTouch = isHorizontal
-        ? (details) => handleTouch(details.globalPosition, context)
-        : null;
-    var handleVerticalTouch = isHorizontal
-        ? null
-        : (details) => handleTouch(details.globalPosition, context);
+    // handle gestures
+    var handleHorizontalTouch =
+        (details) => handleHorizontalDrag(details.globalPosition, context);
+    var handleVerticalTouch =
+        (details) => handleVerticalDrag(details.globalPosition, context);
+    var handleCancelTouch = isHorizontal ? () => handleDragEnded() : null;
+    var handleEndTouch = isHorizontal ? (_) => handleDragEnded() : null;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onVerticalDragDown: handleVerticalTouch,
       onVerticalDragStart: handleVerticalTouch,
       onVerticalDragUpdate: handleVerticalTouch,
-      onVerticalDragCancel: isHorizontal ? null : () => handleTouchEnded(),
-      onVerticalDragEnd: isHorizontal ? null : (_) => handleTouchEnded(),
+      onVerticalDragCancel: handleCancelTouch,
+      onVerticalDragEnd: handleEndTouch,
       onHorizontalDragDown: handleHorizontalTouch,
       onHorizontalDragStart: handleHorizontalTouch,
       onHorizontalDragUpdate: handleHorizontalTouch,
-      onHorizontalDragCancel: isHorizontal ? () => handleTouchEnded() : null,
-      onHorizontalDragEnd: isHorizontal ? (_) => handleTouchEnded() : null,
+      onHorizontalDragCancel: handleCancelTouch,
+      onHorizontalDragEnd: handleEndTouch,
       child: Stack(children: [container, gradientBar, cursor]),
     );
   }
