@@ -17,14 +17,12 @@ const List<Color> _kDefaultColors = [
   Color(0xffff0000)
 ];
 
-/**
- * `CircularColorPicker` displays a circular color picker gradient
- * that returns a `Color` when touch/drag ends.
- *
- * Additionally, you can customize the size of the picker elements.
- * `radius`: radius of the circular gradient
- * `cursorRadius`: radius of the cursor
- */
+/// `CircularColorPicker` displays a circular color picker gradient
+/// that returns a `Color` when touch/drag ends.
+///
+/// Additionally, you can customize the size of the picker elements.
+/// `radius`: radius of the circular gradient
+/// `cursorRadius`: radius of the cursor
 class CircularColorPicker extends StatefulWidget {
   // set initial starting color
   final Color initialColor;
@@ -112,8 +110,8 @@ class _CircularColorPickerState extends State<CircularColorPicker> {
 
     // container
     Widget container = SizedBox(
-        width: (radius + cursorRadius) * 2.0,
-        height: (radius + cursorRadius) * 2.0,
+      width: (radius + cursorRadius) * 2.0,
+      height: (radius + cursorRadius) * 2.0,
     );
 
     // gradient
@@ -124,8 +122,8 @@ class _CircularColorPickerState extends State<CircularColorPicker> {
         width: diameter,
         height: diameter,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(radius)),
-            gradient: SweepGradient(colors: _kDefaultColors),
+          borderRadius: BorderRadius.all(Radius.circular(radius)),
+          gradient: SweepGradient(colors: _kDefaultColors),
         ),
       ),
     );

@@ -24,20 +24,18 @@ const List<Color> _kDefaultGrayScaleColors = [
   Color(0xffffffff)
 ];
 
-/**
- * `BarColorPicker` displays a bar color picker gradient
- * that returns a `Color` when touch/drag ends.
- *
- * Use `isHorizontal` to control if the bar color picker is
- * horizontal or vertical. Default is horizontal.
- *
- * Use `BarColorPicker.grayScale` to display a grayscale picker.
- * Otherwise, `BarColorPicker` will default to a color picker.
- *
- * Additionally, you can customize the size of the picker.
- * `width`: height for a horizontal bar, width for a vertical bar
- * `length`: width for a horizontal bar, height for a vertical bar
- */
+/// `BarColorPicker` displays a bar color picker gradient
+/// that returns a `Color` when touch/drag ends.
+///
+/// Use `isHorizontal` to control if the bar color picker is
+/// horizontal or vertical. Default is horizontal.
+///
+/// Use `BarColorPicker.grayScale` to display a grayscale picker.
+/// Otherwise, `BarColorPicker` will default to a color picker.
+///
+/// Additionally, you can customize the size of the picker.
+/// `width`: height for a horizontal bar, width for a vertical bar
+/// `length`: width for a horizontal bar, height for a vertical bar
 class BarColorPicker extends StatefulWidget {
   // horizontal bar vs vertical bar
   final bool isHorizontal;
@@ -70,15 +68,15 @@ class BarColorPicker extends StatefulWidget {
     double length,
     ValueChanged onColorChange,
   }) : this(
-    key: key,
-    isHorizontal: isHorizontal ?? true,
-    isColor: false,
-    initialColor: initialColor ?? _kDefaultGrayScaleColor,
-    colors: colors ?? _kDefaultGrayScaleColors,
-    width: width ?? _kDefaultWidth,
-    length: length ?? _kDefaultLength,
-    onColorChange: onColorChange,
-  );
+          key: key,
+          isHorizontal: isHorizontal ?? true,
+          isColor: false,
+          initialColor: initialColor ?? _kDefaultGrayScaleColor,
+          colors: colors ?? _kDefaultGrayScaleColors,
+          width: width ?? _kDefaultWidth,
+          length: length ?? _kDefaultLength,
+          onColorChange: onColorChange,
+        );
 
   // default constructor is for color
   BarColorPicker({
@@ -192,10 +190,10 @@ class _BarColorPickerState extends State<BarColorPicker> {
           gradient: isHorizontal
               ? LinearGradient(colors: widget.colors)
               : LinearGradient(
-            colors: widget.colors,
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+                  colors: widget.colors,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
         ),
       ),
     );

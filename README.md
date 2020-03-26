@@ -1,6 +1,6 @@
 # fluttercolorpickers
 
-Flutter color pickers
+Flutter Color Pickers
 
 ## Getting Started
 
